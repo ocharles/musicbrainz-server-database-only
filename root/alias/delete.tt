@@ -1,4 +1,0 @@
-<form action="[% c.req.uri %]" method="post">
-  [% INCLUDE 'forms/edit-note.tt' %]
-  [% enter_edit() %]
-</form>

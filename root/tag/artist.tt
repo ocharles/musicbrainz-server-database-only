@@ -1,3 +1,0 @@
-[%- INCLUDE 'tag/entity-list.tt' page='artist',
-    no_entities_text=l('No artists tagged with this tag were found.') 
-    heading=l('Appears on artists') -%]
