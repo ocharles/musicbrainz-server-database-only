@@ -3,7 +3,7 @@ package MusicBrainz::Server::DatabaseConnectionFactory;
 use strict;
 use warnings;
 
-use aliased 'MusicBrainz::Server::Database';
+use MusicBrainz::Server::Database;
 
 my $connector_class = 'MusicBrainz::Server::Connector';
 our %databases;
@@ -14,7 +14,7 @@ sub register_databases
     my ($class, %databases) = @_;
     while (my ($key, $args) = each %databases) {
         next unless $args;
-        $class->register_database($key, Database->new($args));
+        $class->register_database($key, MusicBrainz::Server::Database->new($args));
     }
 }
 

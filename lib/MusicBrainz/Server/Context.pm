@@ -3,7 +3,7 @@ use Moose;
 
 use DBDefs;
 use MusicBrainz::Server::CacheManager;
-use aliased 'MusicBrainz::Server::DatabaseConnectionFactory';
+use MusicBrainz::Server::DatabaseConnectionFactory;
 use Class::MOP;
 
 has 'cache_manager' => (
@@ -19,7 +19,7 @@ has 'conn' => (
 );
 
 sub _build_conn {
-    return DatabaseConnectionFactory->get_connection('READWRITE');
+    return MusicBrainz::Server::DatabaseConnectionFactory->get_connection('READWRITE');
 }
 
 has 'models' => (

@@ -31,7 +31,7 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 
-use aliased 'MusicBrainz::Server::Entity::Track';
+use MusicBrainz::Server::Entity::Track;
 
 use DBDefs;
 use MusicBrainz::Server::Context;

@@ -34,7 +34,7 @@ use DBDefs;
 use Sql;
 use MusicBrainz::Server::Replication qw( :replication_type NON_REPLICATED_TABLES );
 
-use aliased 'MusicBrainz::Server::DatabaseConnectionFactory' => 'Databases';
+use MusicBrainz::Server::DatabaseConnectionFactory;
 
 my ($fHelp, $fIgnoreErrors);
 my $tmpdir = "/tmp";
@@ -93,7 +93,7 @@ EOF
 $fHelp and usage();
 @ARGV or usage();
 
-my $mb = Databases->get_connection('READWRITE');
+my $mb = MusicBrainz::Server::DatabaseConnectionFactory->get_connection('READWRITE');
 my $sql = Sql->new($mb->dbh);
 
 

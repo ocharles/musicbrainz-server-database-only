@@ -33,20 +33,20 @@ use lib "$FindBin::Bin/../lib";
 use DBDefs;
 use MusicBrainz::Server::Replication ':replication_type';
 
-use aliased 'MusicBrainz::Server::DatabaseConnectionFactory' => 'Databases';
+use MusicBrainz::Server::DatabaseConnectionFactory;
 
-my $READWRITE = Databases->get("READWRITE");
-my $READONLY  = Databases->get("READONLY");
+my $READWRITE = MusicBrainz::Server::DatabaseConnectionFactory->get("READWRITE");
+my $READONLY  = MusicBrainz::Server::DatabaseConnectionFactory->get("READONLY");
 
 # Register a new database connection as the system user, but to the MB
 # database
-my $SYSTEM = Databases->get("SYSTEM");
+my $SYSTEM = MusicBrainz::Server::DatabaseConnectionFactory->get("SYSTEM");
 my $SYSMB  = $SYSTEM->meta->clone_object(
     $SYSTEM,
     database => $READWRITE->database,
     schema => $READWRITE->schema
 );
-Databases->register_database("SYSMB", $SYSMB);
+MusicBrainz::Server::DatabaseConnectionFactory->register_database("SYSMB", $SYSMB);
 
 my $REPTYPE = &DBDefs::REPLICATION_TYPE;
 
@@ -124,7 +124,7 @@ sub InstallExtension
 sub CreateReplicationFunction
 {
     # Now connect to that database
-    my $mb = Databases->get_connection('SYSMB');
+    my $mb = MusicBrainz::Server::DatabaseConnectionFactory->get_connection('SYSMB');
     my $sql = Sql->new( $mb->dbh );
 
     $sql->auto_commit;
@@ -141,7 +141,7 @@ sub CreateReplicationFunction
     sub get_sql
     {
         my ($name) = shift;
-        $mb = Databases->get_connection($name);
+        $mb = MusicBrainz::Server::DatabaseConnectionFactory->get_connection($name);
         $sql = Sql->new($mb->dbh);
     }
 }
@@ -167,10 +167,10 @@ sub Create
     else
     {
         $sysname = $createdb . "_SYSTEM";
-        $sysname = "SYSTEM" if not defined Databases->get($sysname);
+        $sysname = "SYSTEM" if not defined MusicBrainz::Server::DatabaseConnectionFactory->get($sysname);
     }
 
-    my $db = Databases->get($createdb);
+    my $db = MusicBrainz::Server::DatabaseConnectionFactory->get($createdb);
 
     {
         # Check the cluster uses the C locale
@@ -202,7 +202,7 @@ sub Create
 
     # You can do this via CREATE FUNCTION, CREATE LANGUAGE; but using
     # "createlang" is simpler :-)
-    my $sys_db = Databases->get($sysname);
+    my $sys_db = MusicBrainz::Server::DatabaseConnectionFactory->get($sysname);
     my $sys_in_thisdb = $sys_db->meta->clone_object($sys_db, database => $dbname);
     my @opts = $sys_in_thisdb->shell_args;
     splice(@opts, -1, 0, "-d");
@@ -280,7 +280,7 @@ sub GrantSelect
 
     my $name = $_[0];
 
-    my $mb = Databases->get_connection($name);
+    my $mb = MusicBrainz::Server::DatabaseConnectionFactory->get_connection($name);
     my $dbh = $mb->dbh;
     my $sql = Sql->new( $dbh );
     $sql->auto_commit;
